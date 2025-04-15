@@ -1,0 +1,82 @@
+setting:
+  seed: 20000812
+  os_environ:
+    WANDB_API_KEY: d3f69362d06571ab30ecfe16685ed5446fcea213
+    WANDB_RUN_ID: ~
+    CUDA_VISIBLE_DEVICES: 0,1,2,3
+    MASTER_ADDR: 127.0.0.1
+    MASTER_PORT: 12317
+    WORLD_SIZE: 8
+    NODE_RANK: 0
+#      WANDB_MODE: offline
+  wandb_config:
+    project: pretraining
+    name: SCG_esm_pretraining
+
+model:
+#    Which model to use
+  model_py_path: esm/esm_lm_model
+  kwargs:
+#    Arguments to initialize the specific class
+    config_path: weights/PLMs/SCG_Layer6/
+    load_pretrained: False
+
+#    Arguments to initialize the basic class AbstractModel
+  lr_scheduler_kwargs:
+    last_epoch: -1
+    init_lr: 0
+    max_lr: 1.0e-4
+    final_lr: 4.0e-5
+    warmup_steps: 2000
+    start_decay_after_n_steps: 16000
+    end_decay_after_n_steps: 30000
+#    Weather to use this scheduler or not
+    on_use: True
+
+  optimizer_kwargs:
+    betas: [0.9, 0.99]
+    weight_decay: 0.01
+
+  save_path: weights/Pretrain/SCG_Layer6.pt
+  load_prev_scheduler: false
+  save_weights_only: false
+
+
+dataset:
+#    Arguments to initialize the basic class LMDBDataset
+  dataset_py_path: esm/esm_lm_dataset
+  dataloader_kwargs:
+    batch_size: 64
+    num_workers: 8
+
+# config dataset here
+  train_lmdb: LMDB/
+  valid_lmdb: LMDB/
+  test_lmdb: LMDB/
+#    Arguments to initialize the specific class
+  kwargs:
+    tokenizer: weights/PLMs/SCG_Layer6
+    max_length: 512
+    mask_ratio: 0.15
+
+
+#  Arguments to initialize Pytorch Lightning Trainer
+Trainer:
+  max_epochs: 50
+  max_steps: 1000000
+  min_steps: 1000000
+  log_every_n_steps: 1
+  accelerator: gpu
+  devices: 4
+  accumulate_grad_batches: 1
+  num_nodes: 1
+  strategy:
+    find_unused_parameters: True
+  logger: True
+  enable_checkpointing: false 
+  num_sanity_val_steps: 0
+  val_check_interval: 300
+  precision: 16
+  limit_val_batches: 1
+  limit_test_batches: 0
+
