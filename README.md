@@ -1,6 +1,6 @@
 # Molecular-Level Protein Semantic Learning via Structure-Aware Coarse-Grained Language Modeling
 
-![frame](.\img\frame.png)
+![frame](img/frame.png)
 
 
 
