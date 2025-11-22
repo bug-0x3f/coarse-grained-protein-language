@@ -1,0 +1,22 @@
+model:
+  name: VQVAEWithAttention
+  input_dim: 74
+  hidden_dim: 240 # encoder hidden size
+  codebook_size: 1024
+  embedding_dim: 10
+  intermediate_size: 240
+  save_path: ./model/vqvae.pth
+wandb_config:
+  project: VQVAE-remodel-retrain
+  name: attention-as-encoder
+trainer:
+  batch_size: 256
+  num_workers: 1
+  num_epochs: 20
+  learning_rate: 0.001
+dataset:
+  filepath: merged_features.npy # path of the dataset
+setting:
+  os_environ:
+    CUDA_VISIBLE_DEVICES: 0
+  logger: True
